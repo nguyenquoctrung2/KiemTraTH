@@ -1,0 +1,120 @@
+// Màn hình AddBike
+function AddBike({ navigation }) {
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [img, setImg] = useState('');
+  const dispatch = useDispatch(); // Dispatch action
+
+  const handleAddBike = () => {
+    if (!name || !price || !img) {
+      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin.');
+      return;
+    }
+
+    const newBike = { name, price, img };
+    dispatch(addBike(newBike)); // Thêm xe đạp vào Redux store
+
+    Alert.alert('Thành công', 'Xe đạp đã được thêm.');
+    navigation.goBack(); // Quay lại màn hình Home
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Tên xe đạp"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Giá"
+        value={price}
+        onChangeText={setPrice}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="URL ảnh"
+        value={img}
+        onChangeText={setImg}
+      />
+      <Button title="Thêm xe đạp" onPress={handleAddBike} />
+    </View>
+  );
+}
+
+// Cấu hình navigation
+const Stack = createNativeStackNavigator();
+
+// App component
+export default function App() {
+  return (
+    <Provider store={store}> {/* Cung cấp Redux store cho toàn bộ ứng dụng */}
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeApp} />
+          <Stack.Screen name="AddBike" component={AddBike} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  );
+}
+
+// Styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 50,
+  },
+  imgC2: {
+    width: 135,
+    height: 127,
+    resizeMode: 'contain',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  textC2: {
+    fontWeight: '500',
+    fontSize: 18,
+    lineHeight: 24,
+    textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.7)',
+  },
+  text1C2: {
+    fontWeight: '500',
+    fontSize: 18,
+    lineHeight: 24,
+    textAlign: 'center',
+    color: 'rgba(0, 0, 0, 1)',
+  },
+  content2: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+  },
+  productContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    marginHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 15,
+    paddingLeft: 10,
+  },
+});
