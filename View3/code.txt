@@ -1,0 +1,12 @@
+// Màn hình BikeDetail
+function BikeDetail({ route }) {
+  const { bike } = route.params; // Receive bike data from navigation route params
+
+  return (
+    <View style={styles.detailContainer}>
+      <Image source={{ uri: bike.img }} style={styles.detailImg} />
+      <Text style={styles.detailText}>{bike.name}</Text>
+      <Text style={styles.detailPrice}>${bike.price}</Text>
+    </View>
+  );
+}
