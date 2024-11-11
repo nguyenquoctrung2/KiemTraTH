@@ -1,3 +1,56 @@
+// App.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, Image, Button, StyleSheet, TextInput, Alert } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import store from './redux/store'; // Import store từ redux/store.js
+import { addBike, setBikes } from './redux/bikeSlice'; // Import action creators
+
+// Màn hình HomeApp
+function HomeApp({ navigation }) {
+  const bikes = useSelector(state => state.bike.bikes); // Lấy bikes từ Redux store
+  const dispatch = useDispatch(); // Dispatch action
+
+  useEffect(() => {
+    // Gọi API khi component được mount
+    fetch('https://6565ed57eb8bb4b70ef29963.mockapi.io/bike')
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(setBikes(data)); // Cập nhật bikes vào Redux store
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [dispatch]);
+
+  return (
+    <View style={styles.content2}>
+    <FlatList
+    data={bikes}
+    renderItem={({ item }) => {
+      return (
+        <View style={styles.productContainer}>
+          <Image source={{ uri: item.img }} style={styles.imgC2} />
+          <Text style={styles.textC2}>{item.name}</Text>
+          <Text style={styles.text1C2}>${item.price}</Text>
+          <Button
+                title="Chi tiết"
+                onPress={() => navigation.navigate('BikeDetail', { bike: item })}
+              />
+        </View>
+      );
+    }}
+    numColumns={1}
+  />
+      <Button
+        title="Thêm xe đạp"
+        onPress={() => navigation.navigate('AddBike')}
+      />
+    </View>
+  );
+}
+
 // Màn hình AddBike
 function AddBike({ navigation }) {
   const [name, setName] = useState('');
@@ -59,7 +112,18 @@ function AddBike({ navigation }) {
     </View>
   );
 }
+// Màn hình BikeDetail
+function BikeDetail({ route }) {
+  const { bike } = route.params; // Receive bike data from navigation route params
 
+  return (
+    <View style={styles.detailContainer}>
+      <Image source={{ uri: bike.img }} style={styles.detailImg} />
+      <Text style={styles.detailText}>{bike.name}</Text>
+      <Text style={styles.detailPrice}>${bike.price}</Text>
+    </View>
+  );
+}
 // Cấu hình navigation
 const Stack = createNativeStackNavigator();
 
@@ -71,6 +135,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeApp} />
           <Stack.Screen name="AddBike" component={AddBike} />
+          <Stack.Screen name="BikeDetail" component={BikeDetail} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
@@ -132,5 +197,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     paddingLeft: 10,
+  },
+  detailImg: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  detailText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  detailPrice: {
+    fontSize: 22,
+    color: '#28a745',
   },
 });
